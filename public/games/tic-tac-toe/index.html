@@ -1,0 +1,39 @@
+<!-- tic tac toe index page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="../../src/styles/global.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-link-container">
+        <a href="../../" class="back-link">
+            &larr; Back to Game Library
+        </a>
+        <button id="theme-toggle-btn">🌞 Light Mode</button>
+    </div>
+
+    <div class="game-container">
+        <h1>Tic-Tac-Toe</h1>
+        <div id="status" class="status">Player X's Turn</div>
+        <div class="board" id="board">
+            <div class="cell" tabIndex="0" data-cell-index="0"></div>
+            <div class="cell" tabIndex="0" data-cell-index="1"></div>
+            <div class="cell" tabIndex="0" data-cell-index="2"></div>
+            <div class="cell" tabIndex="0" data-cell-index="3"></div>
+            <div class="cell" tabIndex="0" data-cell-index="4"></div>
+            <div class="cell" tabIndex="0" data-cell-index="5"></div>
+            <div class="cell" tabIndex="0" data-cell-index="6"></div>
+            <div class="cell" tabIndex="0" data-cell-index="7"></div>
+            <div class="cell" tabIndex="0" data-cell-index="8"></div>
+        </div>
+        <button id="restart-btn" class="restart-btn">Restart Game</button>
+    </div>
+    
+    <script src="../../scripts/theme-toggle.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!-- snake index page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake</title>
+    <link rel="stylesheet" href="../../src/styles/global.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header-link-container">
+        <a href="../../" class="back-link">
+            &larr; Back to Game Library
+        </a>
+        <button id="theme-toggle-btn">🌞 Light Mode</button>
+    </div>
+
+    <div class="game-container">
+        <h1>Snake</h1>
+        <div id="game-board"></div>
+        <div id="score" class="score">Score: 0</div>
+        <div id="game-over-message" class="hidden">Game Over!</div>
+        <button id="restart-btn" class="restart-btn">Restart Game</button>
+        
+        <div class="instructions">
+            <h2>How to Play</h2>
+            <p>Use the arrow keys or WASD to control the snake. Eat the red food to grow and increase your score. Avoid hitting the walls or your own tail!</p>
+        </div>
+    </div>
+    
+    <script src="../../scripts/theme-toggle.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

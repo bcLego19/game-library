@@ -1,0 +1,70 @@
+/* tic-tac-toe styles */
+
+/* Dark Mode (Default) */
+:root {
+  --bg-primary: #1C1C1E;
+  --text-primary: #F9F9F9;
+  --accent-color: #FF6600;
+}
+
+/* Light Mode */
+body.light-mode {
+  --bg-primary: #F9F9F9;
+  --text-primary: #1C1C1E;
+  --accent-color: #D95B00;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.game-container {
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #3a3a3c;
+    border: 2px solid #5a5a5c;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    font-weight: bold;
+}
+
+.cell.x {
+    color: var(--accent-color); /* Highlight */
+}
+
+.cell.o {
+    color: #f9f9f9; /* Accent */
+}
+
+.restart-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 5px;
+}

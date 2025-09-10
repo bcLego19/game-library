@@ -1,0 +1,24 @@
+/* Pong Game Board */
+#pong-board {
+    background-color: #000;
+    border: 2px solid var(--text-primary);
+    align-content: center;
+    justify-items: center;
+}
+
+.game-container {
+    padding-top: 70px;
+}
+
+.header-link-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.score-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 20px;
+}

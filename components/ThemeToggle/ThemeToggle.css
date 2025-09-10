@@ -1,0 +1,14 @@
+/* Theme Toggle stylesheet */
+.theme-toggle-btn {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--accent-color);
+}
