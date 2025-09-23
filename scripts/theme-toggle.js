@@ -1,15 +1,5 @@
 // public/scripts/theme-toggle.js
 document.addEventListener('DOMContentLoaded', () => {
-  const toggleBtn = document.getElementById('theme-toggle-btn');
-
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      document.body.classList.toggle('light-mode');
-    });
-  }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.querySelector('#theme-toggle-btn');
     const body = document.body;
 
@@ -27,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonText();
 
         toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
             // Update the button text immediately after toggling
             updateButtonText();
         });
