@@ -57,14 +57,3 @@ body {
 .cell.o {
     color: #f9f9f9; /* Accent */
 }
-
-.restart-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    background-color: var(--accent-color);
-    color: var(--bg-primary);
-    border: none;
-    border-radius: 5px;
-}

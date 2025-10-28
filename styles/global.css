@@ -1,0 +1,168 @@
+/* src/styles/global.css */
+
+/* Reset */
+
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/*
+  10. Create a root stacking context
+*/
+#root, #__next {
+  isolation: isolate;
+}
+
+/* Global styles */
+
+/* Dark Mode (Default) */
+:root {
+  --bg-primary: #1C1C1E;
+  --text-primary: #F9F9F9;
+  --text-secondary: #8E8E93;
+  --accent-color: #FF6600;
+  --card-bg: #1C1C1E;
+  --card-border: #3A3A3C;
+}
+
+/* Light Mode */
+body.light-mode {
+  --bg-primary: #F0F0F0;
+  --text-primary: #1C1C1E;
+  --text-secondary: #5B5B5E;
+  --accent-color: #D95B00;
+  --card-bg: #FFFFFF;
+  --card-border: #E0E0E0;
+}
+
+body {
+  background-color: var(--bg-primary); /* Primary */
+  color: var(--text-primary); /* Accent */
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary); /* Accent */
+}
+
+a {
+  color: var(--accent-color); /* Highlight */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Update your components to use variables */
+.game-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.game-card h3 {
+  color: var(--text-primary);
+}
+
+.game-card p {
+  color: var(--text-secondary);
+}
+
+/* Styling for the header link container */
+.header-link-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.restart-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 5px;
+}
+
+/* Styling for the "Back to Game Library" link */
+.back-link {
+    background-color: var(--card-bg, #1C1C1E);
+    color: var(--text-primary, #F9F9F9);
+    border: 1px solid var(--card-border, #3A3A3C);
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.back-link:hover {
+    border-color: var(--accent-color);
+}
+
+#theme-toggle-btn {
+    position: static;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    background: var(--card-bg, #1C1C1E); /* Use a fallback color */
+    color: var(--text-primary, #F9F9F9);
+    border: 1px solid var(--card-border, #3A3A3C);
+    border-radius: 5px;
+}
+
+#theme-toggle-btn:hover {
+    border-color: var(--accent-color);
+}
