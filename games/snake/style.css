@@ -1,40 +1,58 @@
-/* snake style.css */
-/* Add your light/dark mode variables here */
+/* public/games/snake/style.css */
+
+/* Dark Mode (Default) */
 :root {
-  --bg-primary: #1C1C1E;
-  --text-primary: #F9F9F9;
-  --accent-color: #FF6600;
-  /* Add colors for snake, food, etc. */
-  --snake-color: #4CAF50;
-  --food-color: #FF0000;
+    --bg-primary: #1C1C1E;
+    --text-primary: #F9F9F9;
+    --accent-color: #FF6600;
+    /* Add colors for snake, food, etc. */
+    --snake-color: #4CAF50;
+    --food-color: #FF0000;
 }
 
 body.light-mode {
-  --bg-primary: #F9F9F9;
-  --text-primary: #1C1C1E;
-  --accent-color: #D95B00;
-  --snake-color: #388E3C;
-  --food-color: #C00000;
+    --bg-primary: #F9F9F9;
+    --text-primary: #1C1C1E;
+    --accent-color: #D95B00;
+    --snake-color: #388E3C;
+    --food-color: #C00000;
 }
 
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Allow header to be at the top */
+    justify-content: flex-start; /* Start content from the top */
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
 }
 
-/* Snake Game Board */
+/* Snake Game Board (Original Desktop Size) */
 #game-board {
     display: grid;
-    width: 400px;
-    height: 400px;
+    width: 400px; /* Fixed desktop width */
+    height: 400px; /* Fixed desktop height */
     border: 2px solid var(--text-primary);
+    margin-top: 20px; 
 }
 
-/* Add to snake style.css */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Instructional Text Fix */
+.instructions {
+    text-align: center;
+    /* Reduce top margin that was causing cut-off */
+    margin: 10px auto; 
+    padding: 0 10px;
+    max-width: 400px;
+}
+
 #game-over-message {
     font-size: 2em;
     color: var(--food-color);
@@ -55,4 +73,23 @@ body {
 .food {
     background-color: var(--food-color);
     border-radius: 50%;
+}
+
+/* ------------------------------------ */
+/* MOBILE RESPONSIVENESS (<= 600px)     */
+/* ------------------------------------ */
+@media (max-width: 600px) {
+    /* CRUCIAL: Use viewport units to scale the board */
+    #game-board {
+        width: 90vw;
+        height: 90vw;
+        /* Reapply desktop max size to prevent overscaling on large tablets */
+        max-width: 400px;
+        max-height: 400px;
+        margin-top: 10px;
+    }
+    .instructions {
+        font-size: 0.9em;
+        margin: 5px auto;
+    }
 }

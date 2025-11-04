@@ -5,6 +5,8 @@
   --bg-primary: #1C1C1E;
   --text-primary: #F9F9F9;
   --accent-color: #FF6600;
+  --cell-bg: #3a3a3c;
+  --cell-border: #5a5a5c;
 }
 
 /* Light Mode */
@@ -12,25 +14,32 @@ body.light-mode {
   --bg-primary: #F9F9F9;
   --text-primary: #1C1C1E;
   --accent-color: #D95B00;
+  --cell-bg: #E0E0E0;
+  --cell-border: #B0B0B0;
 }
 
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: Arial, sans-serif;
+    /* FIX: Change body to a column layout starting from the top */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start; /* Start content from the top */
     align-items: center;
-    height: 100vh;
+    min-height: 100vh; /* Use min-height instead of fixed height */
     margin: 0;
 }
 
 .game-container {
     text-align: center;
+    /* Add some top margin to space below the header links */
+    margin-top: 20px;
 }
 
 .board {
     display: grid;
+    /* Desktop size: 3 cells of 100px each */
     grid-template-columns: repeat(3, 100px);
     grid-template-rows: repeat(3, 100px);
     gap: 5px;
@@ -38,16 +47,22 @@ body {
 }
 
 .cell {
+    /* Desktop cell size */
     width: 100px;
     height: 100px;
-    background-color: #3a3a3c;
-    border: 2px solid #5a5a5c;
+    background-color: var(--cell-bg);
+    border: 2px solid var(--cell-border);
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 3em;
     font-weight: bold;
+    transition: background-color 0.1s;
+}
+
+.cell:hover:empty {
+    background-color: var(--cell-border);
 }
 
 .cell.x {
@@ -55,5 +70,32 @@ body {
 }
 
 .cell.o {
-    color: #f9f9f9; /* Accent */
+    color: var(--text-primary); /* Accent */
+}
+
+/* ------------------------------------ */
+/* MOBILE RESPONSIVENESS (<= 600px)     */
+/* ------------------------------------ */
+@media (max-width: 600px) {
+    /* FIX 2: Implement viewport unit scaling for the board */
+    .board {
+        /* Set max width to prevent overscaling on tablets */
+        max-width: 90vw;
+        gap: 1vw; 
+        
+        /* Use minmax(0, 29vw) to ensure cells fill 90vw width */
+        grid-template-columns: repeat(3, minmax(0, 29vw));
+        grid-template-rows: repeat(3, minmax(0, 29vw));
+    }
+    
+    /* Remove fixed width/height for cells on mobile */
+    .cell {
+        width: auto;
+        height: auto;
+        font-size: 2.5em;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
 }

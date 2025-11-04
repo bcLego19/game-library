@@ -1,4 +1,27 @@
-/* Pong Game Board */
+/* pong local css file */
+
+/* Dark Mode (Default) */
+:root {
+    --bg-primary: #1C1C1E;
+    --text-primary: #F9F9F9;
+    --accent-color: #FF6600;
+}
+
+body.light-mode {
+    --bg-primary: #F9F9F9;
+    --text-primary: #1C1C1E;
+    --accent-color: #D95B00;
+}
+
+body {
+    /* CRUCIAL: Set up the main body as a flexible column starting from the top */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Pong Canvas */
 #pong-board {
     background-color: #000;
     border: 2px solid var(--text-primary);
@@ -7,18 +30,43 @@
 }
 
 .game-container {
-    padding-top: 70px;
-}
-
-.header-link-container {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+    /* This compensation is no longer needed since header is not absolutely positioned */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .score-container {
     display: flex;
     justify-content: space-around;
     width: 100%;
+    max-width: 600px; 
     margin-top: 20px;
+}
+
+/* ------------------------------------ */
+/* MOBILE RESPONSIVENESS (<= 600px)     */
+/* ------------------------------------ */
+@media (max-width: 600px) {
+    .game-container {
+        padding-top: 0; 
+    }
+    
+    #pong-board {
+        /* Use viewport units for better scaling control */
+        width: 90vw; 
+        height: 60vw; /* 2/3 aspect ratio */
+        max-width: 600px;
+        max-height: 400px;
+        border-width: 1px;
+    }
+    
+    .score-container {
+        width: 90vw;
+        max-width: 90vw;
+    }
+    
+    .score-container div {
+        font-size: 0.9em;
+    }
 }
