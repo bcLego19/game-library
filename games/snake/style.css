@@ -4,92 +4,147 @@
 :root {
     --bg-primary: #1C1C1E;
     --text-primary: #F9F9F9;
-    --accent-color: #FF6600;
-    /* Add colors for snake, food, etc. */
-    --snake-color: #4CAF50;
-    --food-color: #FF0000;
+    --accent-color: #FF9800;
 }
 
 body.light-mode {
     --bg-primary: #F9F9F9;
     --text-primary: #1C1C1E;
-    --accent-color: #D95B00;
-    --snake-color: #388E3C;
-    --food-color: #C00000;
+    --accent-color: #FB8C00;
 }
 
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
     display: flex;
-    flex-direction: column; /* Allow header to be at the top */
-    justify-content: flex-start; /* Start content from the top */
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
-}
-
-/* Snake Game Board (Original Desktop Size) */
-#game-board {
-    display: grid;
-    width: 400px; /* Fixed desktop width */
-    height: 400px; /* Fixed desktop height */
-    border: 2px solid var(--text-primary);
-    margin-top: 20px; 
+    margin: 0;
+    padding-top: 20px;
 }
 
 .game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-/* Instructional Text Fix */
-.instructions {
     text-align: center;
-    /* Reduce top margin that was causing cut-off */
-    margin: 10px auto; 
-    padding: 0 10px;
-    max-width: 400px;
+    padding-bottom: 20px;
 }
 
-#game-over-message {
-    font-size: 2em;
-    color: var(--food-color);
-    text-align: center;
-    margin-top: 20px;
+/* Game Board Styling */
+#game-board {
+    display: grid;
+    width: 400px; 
+    height: 400px;
+    margin: 20px auto;
+    border: 6px solid var(--accent-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-color: #121212;
+    border-radius: 8px;
 }
 
-.hidden {
-    display: none;
+.cell {
+    /* Base cell styling (mostly determined by JS for grid positions) */
+    background-color: #121212;
+    transition: background-color 0.1s ease;
 }
 
-/* Snake and Food Cells */
 .snake {
-    background-color: var(--snake-color);
-    border: 1px solid #333;
+    background-color: var(--accent-color); 
+    border-radius: 2px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
 }
 
 .food {
-    background-color: var(--food-color);
+    background-color: #F44336; /* Red food */
     border-radius: 50%;
+    transform: scale(0.7);
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(0.7); opacity: 0.8; }
+    to { transform: scale(0.85); opacity: 1; }
+}
+
+.score {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none !important;
 }
 
 /* ------------------------------------ */
-/* MOBILE RESPONSIVENESS (<= 600px)     */
+/* MOBILE CONTROLS STYLING (D-Pad)      */
 /* ------------------------------------ */
+
+#mobile-controls {
+    /* Hide the D-pad container by default on large screens */
+    display: none;
+    margin: 30px auto 0;
+}
+
+.dpad {
+    display: grid;
+    /* Create a 3x3 grid for the D-pad layout */
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    width: 210px; /* Increased size for better touch target */
+    height: 210px;
+}
+
+/* Positioning buttons within the 3x3 grid */
+#up-btn    { grid-column: 2 / 3; grid-row: 1 / 2; }
+#left-btn  { grid-column: 1 / 2; grid-row: 2 / 3; }
+#center-btn{ grid-column: 2 / 3; grid-row: 2 / 3; visibility: hidden; } /* Hidden placeholder */
+#right-btn { grid-column: 3 / 4; grid-row: 2 / 3; }
+#bottom-btn  { grid-column: 2 / 3; grid-row: 3 / 4; } /* Targeted using user's ID */
+
+.game-btn {
+    /* Ensure mobile buttons have a good touch size */
+    min-height: 50px; 
+    min-width: 50px;
+    border-radius: 12px;
+    background-color: rgba(200, 200, 200, 0.1);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.15s ease;
+}
+
+.game-btn:active {
+    transform: scale(0.95);
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+}
+
+
+/* MOBILE RESPONSIVENESS (<= 600px) */
 @media (max-width: 600px) {
-    /* CRUCIAL: Use viewport units to scale the board */
+    
+    /* 1. Make the D-pad visible on mobile */
+    #mobile-controls {
+        display: grid; /* Use grid for the main container to center the dpad */
+        place-items: center;
+        width: 100%;
+    }
+
+    /* 2. Scale the game board using viewport units */
     #game-board {
-        width: 90vw;
-        height: 90vw;
-        /* Reapply desktop max size to prevent overscaling on large tablets */
+        width: 85vw; 
+        height: 85vw;
         max-width: 400px;
         max-height: 400px;
-        margin-top: 10px;
+        margin: 15px auto;
     }
+
+    /* 3. Center instructions */
     .instructions {
-        font-size: 0.9em;
-        margin: 5px auto;
+        padding: 0 10px;
+        text-align: center;
     }
 }

@@ -41,7 +41,7 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     /* Add padding to prevent content from touching the screen edge on static pages */
-    padding: 10px; 
+    padding: 2vw; 
 }
 
 /* ------------------------------------ */

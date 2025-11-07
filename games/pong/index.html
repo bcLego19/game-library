@@ -17,13 +17,24 @@
     </div>
 
     <div class="game-container">
-        <h1>Pong</h1>
-        <canvas id="pong-board"></canvas>
+        <!-- Scoreboard -->
         <div class="score-container">
             <div id="player-score">Player: 0</div>
             <div id="computer-score">Computer: 0</div>
         </div>
-        <button id="restart-btn" class="restart-btn">Restart Game</button>
+
+        <!-- Canvas -->
+        <canvas id="pong-board"></canvas>
+
+        <!-- Controls -->
+        <div class="controls-container">
+            <button id="restart-btn">Restart Game</button>
+
+            <div class="dpad-container">
+                <button id="up-btn" class="game-btn">UP</button>
+                <button id="bottom-btn" class="game-btn">DOWN</button>
+            </div>
+        </div>
     </div>
     
     <script src="/game-library/scripts/theme-toggle.js"></script>

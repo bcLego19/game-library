@@ -7,32 +7,44 @@ const DIRECTIONS = ['up', 'down', 'left', 'right'];
 const body = document.body;
 const gameBoard = document.querySelector("#game-board");
 const resetBtn = document.querySelector("#restart-btn");
+const scoreDisplay = document.querySelector("#score");
+const gameOverMessage = document.querySelector("#game-over-message");
+
+// --- D-Pad Controls (Mobile) Selectors ---
+const upBtn = document.getElementById('up-btn');
+const bottomBtn = document.getElementById('bottom-btn'); 
+const leftBtn = document.getElementById('left-btn');
+const rightBtn = document.getElementById('right-btn');
+// -----------------------------------------
 
 resetBtn.addEventListener("click", () => {
     clearInterval(gameInterval);
     gameBoard.innerHTML = '';
-    document.querySelector("#game-over-message").classList.add('hidden');
+    gameOverMessage.classList.add('hidden');
     initializeGame();
 });
 
 const startState = {
-    snake: [Math.floor((CELL_SIZE * GRID_SIZE) / 2)], // put the snake in the center (if possible)
+    // Initial snake position (center of the grid)
+    snake: [Math.floor((GRID_SIZE * GRID_SIZE) / 2)], 
     score: 0,
     speed: 1,
-    direction: DIRECTIONS[0],
+    direction: DIRECTIONS[3], // Start moving right
 };
 
 let gameInterval;
 let snakeState;
 let foodPosition = 0;
 
+/**
+ * Sets up the visual grid board.
+ */
 let createBoard = () => {
-    // Set the grid layout on the gameBoard element
     gameBoard.style.display = 'grid';
     gameBoard.style.gridTemplateColumns = 'repeat(' + GRID_SIZE + ', 1fr)';
     gameBoard.style.gridTemplateRows = 'repeat(' + GRID_SIZE + ', 1fr)';
 
-    // Use a single loop to create all the cells
+    // Create all cells
     for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
         let cell = document.createElement('div');
         cell.classList.add('cell');
@@ -40,20 +52,26 @@ let createBoard = () => {
     }
 }
 
+/**
+ * Checks if the snake has collided with a wall or itself.
+ * @param {number} newHead - The calculated position of the next head segment.
+ * @returns {boolean} True if collision occurred, false otherwise.
+ */
 let checkCollision = (newHead) => {
-    // Check for self-collision
+    // 1. Check for self-collision
     for (let i = 0; i < snakeState.snake.length; i++) {
         if (newHead === snakeState.snake[i]) {
             return true;
         }
     }
 
-    // Check for wall collisions
+    // 2. Check for wall collisions
     let oldHead = snakeState.snake[0];
     let newHeadCol = newHead % GRID_SIZE;
     let oldHeadCol = oldHead % GRID_SIZE;
 
-    // Horizontal wrap-around check
+    // Horizontal wall collision check (Left or Right Edge)
+    // Checks if we crossed from the last column to the first, or vice versa
     if (snakeState.direction === 'right' && newHeadCol === 0 && oldHeadCol === GRID_SIZE - 1) {
         return true;
     }
@@ -61,7 +79,7 @@ let checkCollision = (newHead) => {
         return true;
     }
 
-    // Vertical wall collision check
+    // Vertical wall collision check (Top or Bottom Edge)
     let newHeadRow = Math.floor(newHead / GRID_SIZE);
     if (newHeadRow < 0 || newHeadRow >= GRID_SIZE) {
         return true;
@@ -70,89 +88,75 @@ let checkCollision = (newHead) => {
     return false;
 };
 
+/**
+ * Generates a new random position for the food, ensuring it's not on the snake.
+ */
 let generateFood = () => {
-    // generate a random position
-    let newPosition = Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE));
+    let newPosition;
 
-    // check if the food is on the snake's body
-    // find a new position if true
-    let isColliding = false;
-    for (let i = 0; i < snakeState.snake.length; i++) {
-        if (newPosition === snakeState.snake[i]) {
-            isColliding = true;
-            break;
-        }
-    }
-
-    if(isColliding) {
-        generateFood();
-    } else {
-        foodPosition = newPosition;
-    }
+    // Loop until a non-colliding position is found
+    do {
+        newPosition = Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE));
+    } while (snakeState.snake.includes(newPosition));
+    
+    foodPosition = newPosition;
 }
 
+/**
+ * Checks if the snake's head is on the food.
+ */
 let checkForFood = () => {
     let head = snakeState.snake[0];
-    const scoreDisplay = document.querySelector("#score");
-
+    
     if (head === foodPosition) {
-        // Increase the score and update the HTML display
+        // FOOD EATEN
         snakeState.score++;
         scoreDisplay.textContent = 'Score: ' + snakeState.score;
         generateFood();
 
         // Check for speed increase every 5 points
         if (snakeState.score % 5 === 0) {
-            snakeState.speed += 1; // Increase speed
-            // Clear the old interval and start a new one with the updated speed
+            snakeState.speed += 1; 
             clearInterval(gameInterval);
-            let newIntervalDelay = Math.max(100 - (snakeState.speed * 10), 50); // Minimum delay of 50ms
+            // Calculate new interval delay: 100ms starting, decreases by 10ms per speed level, min 50ms
+            let newIntervalDelay = Math.max(100 - (snakeState.speed * 10), 50); 
             gameInterval = setInterval(gameLoop, newIntervalDelay);
         }
-
     } else {
-        // Remove the last element of the snake's array
-        let newSnake = [];
-        for (let i = 0; i < snakeState.snake.length - 1; i++) {
-            newSnake.push(snakeState.snake[i]);
-        }
-        snakeState.snake = newSnake;
+        // NO FOOD: Remove the last element of the snake's array (standard movement)
+        snakeState.snake.pop(); 
     }
 }
 
+/**
+ * Updates the visual state of the board based on the snake and food positions.
+ */
 let redraw = () => {
-    // 1. clear the board
-    // get all cells in the board
     let cells = gameBoard.getElementsByClassName('cell');
 
-    // loop through each cell and remove existing snake or food classes
+    // 1. Clear the board
     for (let i = 0; i < cells.length; i++) {
         cells[i].classList.remove('snake', 'food');
     }
 
     // 2. Draw the snake
-    // Loop through the snake's body array
     for (let i = 0; i < snakeState.snake.length; i++) {
-        // get the cell at the current snake position
         let snakeCell = cells[snakeState.snake[i]];
-
-        // add the 'snake' class to the cell
         if (snakeCell) {
             snakeCell.classList.add('snake');
         }
     }
 
     // 3. Draw the food
-    // get the cell at the food's position
     let foodCell = cells[foodPosition];
-
-    // add the 'food' class to the cell
     if(foodCell) {
         foodCell.classList.add('food');
     }
-
 }
 
+/**
+ * The main game loop executed at intervals.
+ */
 let gameLoop = () => {
     // 1. Calculate the new head position
     let head = snakeState.snake[0];
@@ -173,38 +177,67 @@ let gameLoop = () => {
             break;
     }
 
-    // 2. Check for collisions on the *newHead* before moving the snake
+    // 2. Check for collisions
     if (checkCollision(newHead)) {
         clearInterval(gameInterval);
-        document.querySelector("#game-over-message").classList.remove('hidden');
+        gameOverMessage.classList.remove('hidden');
         return;
     }
 
-    // 3. If no collision, update the snake's position with the newHead
-    let newSnake = [newHead];
-    for (let i = 0; i < snakeState.snake.length; i++) {
-        newSnake.push(snakeState.snake[i]);
-    }
-    snakeState.snake = newSnake;
+    // 3. Update the snake's position with the newHead
+    snakeState.snake.unshift(newHead); 
 
     // 4. Check for food and redraw the board
     checkForFood();
     redraw();
 };
 
+/**
+ * Sets up the game state and starts the interval.
+ */
 let initializeGame = () => {
     createBoard();
-    snakeState = JSON.parse(JSON.stringify(startState));
-    generateFood(); // Now the first piece of food will be drawn
+    // Use deep copy to reset state
+    snakeState = JSON.parse(JSON.stringify(startState)); 
+    scoreDisplay.textContent = 'Score: 0';
+    generateFood(); 
     
-    // Set the initial game interval using the starting speed
+    // Start the game interval
     gameInterval = setInterval(gameLoop, 100); 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initializeGame();
-});
+// ----------------------------------------------------
+// --- CONTROL HANDLERS ---
+// ----------------------------------------------------
 
+/**
+ * Handles directional change from D-pad button clicks.
+ * @param {string} direction - 'up', 'down', 'left', or 'right'.
+ */
+const handleDpadClick = (direction) => {
+    // Check if game is over before allowing direction change
+    if (gameOverMessage.classList.contains('hidden')) {
+        
+        // Prevent immediate reverse direction, matching keyboard logic
+        if (direction === 'up' && snakeState.direction !== 'down') {
+            snakeState.direction = 'up';
+        } else if (direction === 'down' && snakeState.direction !== 'up') {
+            snakeState.direction = 'down';
+        } else if (direction === 'left' && snakeState.direction !== 'right') {
+            snakeState.direction = 'left';
+        } else if (direction === 'right' && snakeState.direction !== 'left') {
+            snakeState.direction = 'right';
+        }
+    }
+};
+
+// Add event listeners for the mobile buttons
+upBtn.addEventListener('click', () => handleDpadClick('up'));
+bottomBtn.addEventListener('click', () => handleDpadClick('down'));
+leftBtn.addEventListener('click', () => handleDpadClick('left'));
+rightBtn.addEventListener('click', () => handleDpadClick('right'));
+
+// Keyboard listener for desktop play
 document.addEventListener("keydown", (e) => {
     switch(e.key) {
         case 'ArrowUp':
@@ -232,4 +265,8 @@ document.addEventListener("keydown", (e) => {
             }
             break;
     }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    initializeGame();
 });

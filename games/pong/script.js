@@ -5,6 +5,10 @@ const playerScoreEl = document.querySelector("#player-score");
 const computerScoreEl = document.querySelector("#computer-score");
 const resetBtn = document.querySelector("#restart-btn");
 
+// Modified D-pad selectors
+const upBtn = document.getElementById('up-btn');
+const bottomBtn = document.getElementById('bottom-btn'); 
+
 // Set up the game constants
 const GAME_WIDTH = 600;
 const GAME_HEIGHT = 400;
@@ -44,28 +48,40 @@ let keys = {};
 let gameState;
 let gameInterval;
 
+// Global state for continuous movement via mobile buttons
+let playerMovingUp = false;
+let playerMovingDown = false;
+
 // Function to draw the ball
 let drawBall = (context, ballDetails) => {
-    context.fillStyle = '#FFFFFF';
+    // Using the CSS variable paddle color for the ball
+    context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle-color'); 
     context.beginPath();
     context.arc(ballDetails.x, ballDetails.y, ballDetails.radius, 0, 2 * Math.PI);
-    context.fill(); // Use fill instead of stroke for a solid ball
+    context.fill();
 };
 
 // Function to draw the paddles
 let drawPaddle = (context, paddleDetails) => {
-    context.fillStyle = '#FFFFFF';
+    context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle-color');
     context.fillRect(paddleDetails.x, paddleDetails.y, paddleDetails.width, paddleDetails.height);
 };
 
 let draw = () => {
-
     ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+    // Draw the center line
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+    ctx.beginPath();
+    ctx.setLineDash([5, 15]);
+    ctx.moveTo(GAME_WIDTH / 2, 0);
+    ctx.lineTo(GAME_WIDTH / 2, GAME_HEIGHT);
+    ctx.stroke();
+    ctx.setLineDash([]); // Reset line style
 
     drawBall(ctx, gameState.ball);
     drawPaddle(ctx, gameState.player);
     drawPaddle(ctx, gameState.computer);
-
 }
 
 let resetBall = () => {
@@ -79,38 +95,30 @@ let resetBall = () => {
 
 let paddleCollisionCheck = () => {
     // Check for collision with the computer's paddle
-    // Check if the ball is moving right and its position is within the computer's paddle
     if (gameState.ball.dx > 0 &&
         gameState.ball.x + gameState.ball.radius >= gameState.computer.x &&
         gameState.ball.y + gameState.ball.radius >= gameState.computer.y &&
         gameState.ball.y - gameState.ball.radius <= gameState.computer.y + gameState.computer.height) {
         
-        // Reverse the ball's horizontal direction
         gameState.ball.dx *= -1;
         
-        // Calculate the hit location
         let relativeIntersectY = (gameState.computer.y + gameState.computer.height / 2) - gameState.ball.y;
         let normalizedRelativeIntersectionY = relativeIntersectY / (gameState.computer.height / 2);
         
-        // Adjust the ball's vertical velocity
         gameState.ball.dy = normalizedRelativeIntersectionY * gameState.ball.speed;
     }
 
     // Check for collision with the player's paddle
-    // Check if the ball is moving left and its position is within the player's paddle
     if (gameState.ball.dx < 0 &&
         gameState.ball.x - gameState.ball.radius <= gameState.player.x + gameState.player.width &&
         gameState.ball.y + gameState.ball.radius >= gameState.player.y &&
         gameState.ball.y - gameState.ball.radius <= gameState.player.y + gameState.player.height) {
             
-        // Reverse the ball's horizontal direction
         gameState.ball.dx *= -1;
 
-        // Calculate the hit location
         let relativeIntersectY = (gameState.player.y + gameState.player.height / 2) - gameState.ball.y;
         let normalizedRelativeIntersectionY = relativeIntersectY / (gameState.player.height / 2);
 
-        // Adjust the ball's vertical velocity
         gameState.ball.dy = normalizedRelativeIntersectionY * gameState.ball.speed;
     }
 }
@@ -118,7 +126,6 @@ let paddleCollisionCheck = () => {
 let update = () => {
     // useful variables
     let gameBall = gameState.ball;
-    let gamePlayer = gameState.player;
     let gameComputer = gameState.computer;
 
     // 1. Update the ball's position
@@ -141,8 +148,8 @@ let update = () => {
         resetBall();
     } else if (gameBall.x + gameBall.radius > GAME_WIDTH) {
         // Player scores a point
-        gamePlayer.score++;
-        playerScoreEl.textContent = 'Player: ' + gamePlayer.score;
+        gameState.player.score++;
+        playerScoreEl.textContent = 'Player: ' + gameState.player.score;
         resetBall();
     }
 
@@ -164,11 +171,11 @@ let update = () => {
     // Prevent the computer paddle from moving off-screen
     gameState.computer.y = Math.max(0, gameState.computer.y, Math.min(GAME_HEIGHT - gameState.computer.height, gameState.computer.y));
 
-    // 5. Track events for player paddle movement
-    if (keys['ArrowUp'] || keys['w']) {
+    // 5. Track events for player paddle movement (Keyboard OR Mobile)
+    if (keys['ArrowUp'] || keys['w'] || playerMovingUp) {
         gameState.player.y -= PADDLE_SPEED;
     }
-    if (keys['ArrowDown'] || keys['s']) {
+    if (keys['ArrowDown'] || keys['s'] || playerMovingDown) {
         gameState.player.y += PADDLE_SPEED;
     }
     
@@ -177,23 +184,14 @@ let update = () => {
 };
 
 let gameLoop = () => {
-
-    // Breakdown of game loop:
-    // 1. get current state of the board (done using gameState variable)
-
-    // 2. Update the game state
     update();
-
-    // 3. redraw the board
     draw();
-
 };
 
 // An initialization function is needed to start the game loop
 let initializeGame = () => {
     gameState = JSON.parse(JSON.stringify(startState)); // Create a copy of the startState
     gameInterval = setInterval(() => {
-        // game loop logic will go here
         gameLoop();
     }, 1000 / 60); // Aim for 60 frames per second
 };
@@ -217,3 +215,47 @@ document.addEventListener("keyup", (e) => {
 document.addEventListener("DOMContentLoaded", () => {
     initializeGame();
 });
+
+// ---------------------------------------------
+// --- MOBILE TOUCH/CLICK CONTROL FUNCTIONS ---
+// ---------------------------------------------
+
+// Function to handle start movement (mobile touch/click)
+const startMoving = (direction, element) => {
+    element.classList.add('is-active'); // Apply visual active state
+    if (direction === 'up') {
+        playerMovingUp = true;
+        playerMovingDown = false; 
+    } else if (direction === 'down') {
+        playerMovingDown = true;
+        playerMovingUp = false; 
+    }
+}
+
+// Function to handle stop movement (mobile touch/click)
+const stopMoving = (direction, element) => {
+    element.classList.remove('is-active'); // Remove visual active state
+    if (direction === 'up') {
+        playerMovingUp = false;
+    } else if (direction === 'down') {
+        playerMovingDown = false;
+    }
+}
+
+// ---------------------------------------------
+// --- ATTACH LISTENERS TO MOBILE BUTTONS ---
+// ---------------------------------------------
+
+// Attach listeners for UP button
+upBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startMoving('up', upBtn); });
+upBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startMoving('up', upBtn); });
+upBtn.addEventListener('mouseup', () => stopMoving('up', upBtn));
+upBtn.addEventListener('touchend', () => stopMoving('up', upBtn));
+upBtn.addEventListener('touchcancel', () => stopMoving('up', upBtn)); 
+
+// Attach listeners for DOWN button
+bottomBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startMoving('down', bottomBtn); });
+bottomBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startMoving('down', bottomBtn); });
+bottomBtn.addEventListener('mouseup', () => stopMoving('down', bottomBtn));
+bottomBtn.addEventListener('touchend', () => stopMoving('down', bottomBtn));
+bottomBtn.addEventListener('touchcancel', () => stopMoving('down', bottomBtn));
