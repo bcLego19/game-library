@@ -1,11 +1,14 @@
 // public/scripts/theme-toggle.js
+import {isDarkMode, toggleTheme, applyTheme} from './theme-util.mjs';
+
 document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.querySelector('#theme-toggle-btn');
-    const body = document.body;
+    
+    applyTheme();
 
     // function to update button text and emoji
     const updateButtonText = () => {
-        if (body.classList.contains('light-mode')) {
+        if (isDarkMode()) {
             toggleBtn.textContent = '🌙 Dark Mode';
         } else {
             toggleBtn.textContent = '🌞 Light Mode';
@@ -17,8 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonText();
 
         toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            // Update the button text immediately after toggling
+            toggleTheme();
             updateButtonText();
         });
     }
